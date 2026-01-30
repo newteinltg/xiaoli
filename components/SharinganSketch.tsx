@@ -14,11 +14,20 @@ const SharinganSketch = () => {
 
     const sketch = (p: p5) => {
       let angle = 0;
+      let baseSize = 0;
 
       p.setup = () => {
         const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
         canvas.mousePressed(changeEye);
+        // 处理移动端触摸
+        canvas.touchEnded(changeEye);
         p.angleMode(p.DEGREES);
+        calculateSize();
+      };
+
+      const calculateSize = () => {
+        // 根据屏幕宽度计算基准大小，确保在手机上也能完整显示
+        baseSize = p.min(p.width, p.height) * 0.8;
       };
 
       p.draw = () => {
@@ -34,44 +43,54 @@ const SharinganSketch = () => {
 
       const changeEye = () => {
         setEyeIndex((prev) => (prev + 1) % totalEyes);
+        return false; // 防止默认行为
       };
 
       p.windowResized = () => {
         p.resizeCanvas(p.windowWidth, p.windowHeight);
+        calculateSize();
       };
 
       const drawEye = (index: number) => {
+        const rMain = baseSize;
+        const rInner = baseSize * 0.66;
+        const rPupil = baseSize * 0.16;
+        const rTomoe = baseSize * 0.1;
+        const tomoeDist = baseSize * 0.33;
+
         // 基础巩膜
         p.noStroke();
-        p.fill(200, 0, 0); // 写轮眼红
-        p.ellipse(0, 0, 300, 300);
+        p.fill(220, 0, 0); // 写轮眼红
+        p.ellipse(0, 0, rMain, rMain);
         
         // 瞳孔外圈
         p.stroke(0);
-        p.strokeWeight(3);
+        p.strokeWeight(p.max(1, baseSize * 0.01));
         p.noFill();
-        p.ellipse(0, 0, 200, 200);
+        p.ellipse(0, 0, rInner, rInner);
 
         // 瞳孔中心
         p.fill(0);
         p.noStroke();
-        p.ellipse(0, 0, 50, 50);
+        p.ellipse(0, 0, rPupil, rPupil);
 
         // 不同类型的勾玉或万花筒图案
         p.fill(0);
+        p.stroke(0);
+        
         switch (index) {
           case 0: // 单勾玉
-            drawTomoe(0, -100, 30);
+            drawTomoe(0, -tomoeDist, rTomoe);
             break;
           case 1: // 双勾玉
-            drawTomoe(0, -100, 30);
-            drawTomoe(0, 100, 30);
+            drawTomoe(0, -tomoeDist, rTomoe);
+            drawTomoe(0, tomoeDist, rTomoe);
             break;
           case 2: // 三勾玉
             for (let i = 0; i < 3; i++) {
               p.push();
               p.rotate(i * 120);
-              drawTomoe(0, -100, 30);
+              drawTomoe(0, -tomoeDist, rTomoe);
               p.pop();
             }
             break;
@@ -80,31 +99,30 @@ const SharinganSketch = () => {
               p.push();
               p.rotate(i * 120);
               p.beginShape();
-              p.vertex(0, -25);
-              p.bezierVertex(-80, -80, -40, -140, 0, -140);
-              p.bezierVertex(40, -140, 80, -80, 0, -25);
+              p.vertex(0, -rPupil * 0.5);
+              p.bezierVertex(-baseSize * 0.25, -baseSize * 0.25, -baseSize * 0.15, -baseSize * 0.45, 0, -baseSize * 0.45);
+              p.bezierVertex(baseSize * 0.15, -baseSize * 0.45, baseSize * 0.25, -baseSize * 0.25, 0, -rPupil * 0.5);
               p.endShape(p.CLOSE);
               p.pop();
             }
             break;
           case 4: // 万花筒 - 佐助 (六芒星)
-            p.stroke(0);
-            p.strokeWeight(10);
+            p.strokeWeight(baseSize * 0.03);
             for (let i = 0; i < 3; i++) {
               p.push();
               p.rotate(i * 60);
-              p.ellipse(0, 0, 280, 60);
+              p.ellipse(0, 0, baseSize * 0.9, baseSize * 0.2);
               p.pop();
             }
             break;
-          case 5: // 万花筒 - 卡卡西/带土 (神威 - 三个大镰刀)
+          case 5: // 万花筒 - 卡卡西/带土 (神威)
             for (let i = 0; i < 3; i++) {
               p.push();
               p.rotate(i * 120);
               p.beginShape();
-              p.vertex(0, -25);
-              p.bezierVertex(-120, -30, -120, -150, 0, -150);
-              p.bezierVertex(-80, -150, -40, -50, 0, -25);
+              p.vertex(0, -rPupil * 0.5);
+              p.bezierVertex(-baseSize * 0.4, -baseSize * 0.1, -baseSize * 0.4, -baseSize * 0.5, 0, -baseSize * 0.5);
+              p.bezierVertex(-baseSize * 0.25, -baseSize * 0.5, -baseSize * 0.15, -baseSize * 0.15, 0, -rPupil * 0.5);
               p.endShape(p.CLOSE);
               p.pop();
             }
@@ -114,50 +132,49 @@ const SharinganSketch = () => {
               p.push();
               p.rotate(i * 90);
               p.beginShape();
-              p.vertex(0, -25);
-              p.bezierVertex(-100, -20, -100, -130, 0, -130);
-              p.bezierVertex(-60, -130, -30, -50, 0, -25);
+              p.vertex(0, -rPupil * 0.5);
+              p.bezierVertex(-baseSize * 0.35, -baseSize * 0.05, -baseSize * 0.35, -baseSize * 0.4, 0, -baseSize * 0.4);
+              p.bezierVertex(-baseSize * 0.2, -baseSize * 0.4, -baseSize * 0.1, -baseSize * 0.15, 0, -rPupil * 0.5);
               p.endShape(p.CLOSE);
               p.pop();
             }
             break;
           case 7: // 万花筒 - 斑 (三个相连的圆弧)
             p.noFill();
-            p.stroke(0);
-            p.strokeWeight(15);
-            p.ellipse(0, 0, 180, 180);
+            p.strokeWeight(baseSize * 0.05);
+            p.ellipse(0, 0, baseSize * 0.6, baseSize * 0.6);
             for (let i = 0; i < 3; i++) {
                 p.push();
                 p.rotate(i * 120);
                 p.fill(0);
-                p.ellipse(0, -90, 40, 40);
+                p.noStroke();
+                p.ellipse(0, -baseSize * 0.3, rTomoe * 1.5, rTomoe * 1.5);
                 p.pop();
             }
             break;
-          case 8: // 永恒万花筒 - 佐助 (融合图案)
-            p.stroke(0);
-            p.strokeWeight(5);
+          case 8: // 永恒万花筒 - 佐助
+            p.strokeWeight(baseSize * 0.02);
             for (let i = 0; i < 3; i++) {
                 p.push();
                 p.rotate(i * 120);
                 p.fill(0);
-                p.ellipse(0, -80, 120, 240);
+                p.ellipse(0, -baseSize * 0.25, baseSize * 0.4, baseSize * 0.8);
                 p.pop();
             }
             p.fill(0);
-            p.ellipse(0,0, 100, 100);
+            p.ellipse(0,0, baseSize * 0.3, baseSize * 0.3);
             break;
-          case 9: // 轮回眼 (虽然不是写轮眼，但作为进阶)
-            p.fill(180, 160, 200); // 紫色巩膜
-            p.ellipse(0, 0, 300, 300);
+          case 9: // 轮回眼
+            p.fill(160, 140, 180); // 紫色
+            p.ellipse(0, 0, rMain, rMain);
             p.noFill();
             p.stroke(0);
-            p.strokeWeight(3);
+            p.strokeWeight(p.max(1, baseSize * 0.005));
             for(let i = 1; i <= 6; i++) {
-                p.ellipse(0, 0, i * 50, i * 50);
+                p.ellipse(0, 0, (rMain / 6) * i, (rMain / 6) * i);
             }
             p.fill(0);
-            p.ellipse(0,0, 20, 20);
+            p.ellipse(0,0, rPupil * 0.4, rPupil * 0.4);
             break;
         }
       };
@@ -165,8 +182,9 @@ const SharinganSketch = () => {
       const drawTomoe = (x: number, y: number, r: number) => {
         p.push();
         p.translate(x, y);
-        p.rotate(-angle); // 使勾玉本身不随眼球整体旋转
+        p.rotate(-angle); 
         p.fill(0);
+        p.noStroke();
         p.ellipse(0, 0, r, r);
         p.beginShape();
         p.vertex(r / 2, 0);
@@ -186,10 +204,10 @@ const SharinganSketch = () => {
   }, [eyeIndex]);
 
   return (
-    <div className="w-full h-screen bg-black flex flex-col items-center justify-center overflow-hidden touch-none">
-      <div ref={canvasRef} className="cursor-pointer" />
-      <div className="absolute bottom-10 text-white font-mono text-lg opacity-50 pointer-events-none">
-        TAP TO EVOLVE | 当前等级: {eyeIndex + 1}/10
+    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-hidden touch-none">
+      <div ref={canvasRef} className="w-full h-full flex items-center justify-center cursor-pointer" />
+      <div className="absolute bottom-6 left-0 right-0 text-center text-white font-mono text-sm sm:text-lg opacity-40 pointer-events-none select-none">
+        TAP TO EVOLVE | STAGE {eyeIndex + 1}/10
       </div>
     </div>
   );
