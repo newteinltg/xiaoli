@@ -28,6 +28,9 @@ const SharinganSketch = () => {
 
       p.draw = () => {
         p.background(0);
+        
+        // 核心改动：只在右侧绘制
+        // 在手机上，我们让它稍微偏右或者居中，但交互逻辑统一
         p.translate(p.width / 2, p.height / 2);
 
         // 旋转动画
@@ -41,20 +44,15 @@ const SharinganSketch = () => {
         setEyeIndex((prev) => (prev + 1) % totalEyes);
       };
 
-      // P5.js 官方推荐的交互处理方式
+      // 全局交互处理：点击屏幕任何地方都触发切换
       p.mousePressed = () => {
-        // 只有在画布区域点击才触发
-        if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
-          changeEye();
-        }
+        changeEye();
+        return false;
       };
 
       p.touchEnded = () => {
-        // 只有在画布区域触摸才触发
-        if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
-          changeEye();
-        }
-        return false; // 阻止默认刷新/滚动行为
+        changeEye();
+        return false; 
       };
 
       p.windowResized = () => {
