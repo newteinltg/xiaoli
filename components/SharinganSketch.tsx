@@ -17,23 +17,20 @@ const SharinganSketch = () => {
       let baseSize = 0;
 
       p.setup = () => {
-        // 创建画布，明确指定渲染器为 P2D 以提高兼容性
         p.createCanvas(p.windowWidth, p.windowHeight);
         p.angleMode(p.DEGREES);
         calculateSize();
       };
 
       const calculateSize = () => {
+        // 根据屏幕最小边计算尺寸，保证在任何屏幕都适中
         baseSize = p.min(p.width, p.height) * 0.8;
       };
 
       p.draw = () => {
-        // 关键：每帧开始前强制清空画布，防止重叠
-        p.clear(0, 0, 0, 255);
-        p.background(0);
+        p.background(0); // 黑色背景
         
-        p.push();
-        // 居中绘制一个眼球
+        // 移动原点到屏幕绝对中心
         p.translate(p.width / 2, p.height / 2);
 
         // 旋转动画
@@ -41,7 +38,6 @@ const SharinganSketch = () => {
         p.rotate(angle);
 
         drawEye(eyeIndex);
-        p.pop();
       };
 
       const changeEye = () => {
@@ -205,6 +201,8 @@ const SharinganSketch = () => {
     };
 
     if (canvasRef.current) {
+      // 防止重复渲染：先清空容器
+      canvasRef.current.innerHTML = '';
       myP5 = new p5(sketch, canvasRef.current);
     }
 
@@ -214,10 +212,10 @@ const SharinganSketch = () => {
   }, [eyeIndex]);
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-hidden touch-none">
-      <div ref={canvasRef} className="w-full h-full flex items-center justify-center cursor-pointer" />
+    <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden touch-none">
+      <div ref={canvasRef} className="flex items-center justify-center" />
       <div className="absolute bottom-6 left-0 right-0 text-center text-white font-mono text-sm sm:text-lg opacity-40 pointer-events-none select-none">
-        TAP TO EVOLVE | STAGE {eyeIndex + 1}/10
+        TAP SCREEN TO EVOLVE | STAGE {eyeIndex + 1}/10
       </div>
     </div>
   );
