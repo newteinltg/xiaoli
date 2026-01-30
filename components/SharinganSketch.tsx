@@ -81,9 +81,9 @@ const SharinganSketch = () => {
               p.rotate(i * 120);
               p.beginShape();
               p.vertex(0, -25);
-              (p as any).bezierVertex(-80, -80, -40, -140, 0, -140);
-              (p as any).bezierVertex(40, -140, 80, -80, 0, -25);
-              p.endShape();
+              p.bezierVertex(-80, -80, -40, -140, 0, -140);
+              p.bezierVertex(40, -140, 80, -80, 0, -25);
+              p.endShape(p.CLOSE);
               p.pop();
             }
             break;
@@ -103,9 +103,9 @@ const SharinganSketch = () => {
               p.rotate(i * 120);
               p.beginShape();
               p.vertex(0, -25);
-              (p as any).bezierVertex(-120, -30, -120, -150, 0, -150);
-              (p as any).bezierVertex(-80, -150, -40, -50, 0, -25);
-              p.endShape();
+              p.bezierVertex(-120, -30, -120, -150, 0, -150);
+              p.bezierVertex(-80, -150, -40, -50, 0, -25);
+              p.endShape(p.CLOSE);
               p.pop();
             }
             break;
@@ -115,9 +115,9 @@ const SharinganSketch = () => {
               p.rotate(i * 90);
               p.beginShape();
               p.vertex(0, -25);
-              (p as any).bezierVertex(-100, -20, -100, -130, 0, -130);
-              (p as any).bezierVertex(-60, -130, -30, -50, 0, -25);
-              p.endShape();
+              p.bezierVertex(-100, -20, -100, -130, 0, -130);
+              p.bezierVertex(-60, -130, -30, -50, 0, -25);
+              p.endShape(p.CLOSE);
               p.pop();
             }
             break;
@@ -170,8 +170,8 @@ const SharinganSketch = () => {
         p.ellipse(0, 0, r, r);
         p.beginShape();
         p.vertex(r / 2, 0);
-        (p as any).bezierVertex(r / 2, -r, -r, -r, -r, 0);
-        p.endShape();
+        p.bezierVertex(r / 2, -r, -r, -r, -r, 0);
+        p.endShape(p.CLOSE);
         p.pop();
       };
     };
