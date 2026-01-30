@@ -17,6 +17,7 @@ const SharinganSketch = () => {
       let baseSize = 0;
 
       p.setup = () => {
+        // 创建画布，明确指定渲染器为 P2D 以提高兼容性
         p.createCanvas(p.windowWidth, p.windowHeight);
         p.angleMode(p.DEGREES);
         calculateSize();
@@ -27,13 +28,20 @@ const SharinganSketch = () => {
       };
 
       p.draw = () => {
+        // 关键：每帧开始前强制清空画布，防止重叠
+        p.clear(0, 0, 0, 255);
         p.background(0);
+        
+        p.push();
+        // 居中绘制一个眼球
         p.translate(p.width / 2, p.height / 2);
 
+        // 旋转动画
         angle += 1;
         p.rotate(angle);
 
         drawEye(eyeIndex);
+        p.pop();
       };
 
       const changeEye = () => {
@@ -100,8 +108,9 @@ const SharinganSketch = () => {
               p.rotate(i * 120);
               p.beginShape();
               p.vertex(0, -rPupil * 0.5);
-              p.bezierVertex(-baseSize * 0.25, -baseSize * 0.25, -baseSize * 0.15, -baseSize * 0.45, 0, -baseSize * 0.45);
-              p.bezierVertex(baseSize * 0.15, -baseSize * 0.45, baseSize * 0.25, -baseSize * 0.25, 0, -rPupil * 0.5);
+              p.vertex(-baseSize * 0.15, -baseSize * 0.2);
+              p.vertex(0, -baseSize * 0.45);
+              p.vertex(baseSize * 0.15, -baseSize * 0.2);
               p.endShape(p.CLOSE);
               p.pop();
             }
@@ -121,8 +130,8 @@ const SharinganSketch = () => {
               p.rotate(i * 120);
               p.beginShape();
               p.vertex(0, -rPupil * 0.5);
-              p.bezierVertex(-baseSize * 0.4, -baseSize * 0.1, -baseSize * 0.4, -baseSize * 0.5, 0, -baseSize * 0.5);
-              p.bezierVertex(-baseSize * 0.25, -baseSize * 0.5, -baseSize * 0.15, -baseSize * 0.15, 0, -rPupil * 0.5);
+              p.vertex(-baseSize * 0.3, -baseSize * 0.2);
+              p.vertex(0, -baseSize * 0.5);
               p.endShape(p.CLOSE);
               p.pop();
             }
@@ -133,8 +142,8 @@ const SharinganSketch = () => {
               p.rotate(i * 90);
               p.beginShape();
               p.vertex(0, -rPupil * 0.5);
-              p.bezierVertex(-baseSize * 0.35, -baseSize * 0.05, -baseSize * 0.35, -baseSize * 0.4, 0, -baseSize * 0.4);
-              p.bezierVertex(-baseSize * 0.2, -baseSize * 0.4, -baseSize * 0.1, -baseSize * 0.15, 0, -rPupil * 0.5);
+              p.vertex(-baseSize * 0.25, -baseSize * 0.1);
+              p.vertex(0, -baseSize * 0.4);
               p.endShape(p.CLOSE);
               p.pop();
             }
@@ -185,7 +194,6 @@ const SharinganSketch = () => {
         p.rotate(-angle); 
         p.fill(0);
         p.noStroke();
-        // 直接绘制圆形和三角形组合来模拟勾玉，避开 bezierVertex 的底层渲染 Bug
         p.ellipse(0, 0, r, r);
         p.beginShape();
         p.vertex(r * 0.5, 0);
