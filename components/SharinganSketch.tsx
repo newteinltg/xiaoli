@@ -17,7 +17,7 @@ const SharinganSketch = () => {
       let baseSize = 0;
 
       p.setup = () => {
-        const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
+        p.createCanvas(p.windowWidth, p.windowHeight);
         p.angleMode(p.DEGREES);
         calculateSize();
       };
@@ -28,12 +28,8 @@ const SharinganSketch = () => {
 
       p.draw = () => {
         p.background(0);
-        
-        // 核心改动：只在右侧绘制
-        // 在手机上，我们让它稍微偏右或者居中，但交互逻辑统一
         p.translate(p.width / 2, p.height / 2);
 
-        // 旋转动画
         angle += 1;
         p.rotate(angle);
 
@@ -44,7 +40,6 @@ const SharinganSketch = () => {
         setEyeIndex((prev) => (prev + 1) % totalEyes);
       };
 
-      // 全局交互处理：点击屏幕任何地方都触发切换
       p.mousePressed = () => {
         changeEye();
         return false;
@@ -67,18 +62,15 @@ const SharinganSketch = () => {
         const rTomoe = baseSize * 0.1;
         const tomoeDist = baseSize * 0.33;
 
-        // 基础巩膜
         p.noStroke();
         p.fill(220, 0, 0); 
         p.ellipse(0, 0, rMain, rMain);
         
-        // 瞳孔外圈
         p.stroke(0);
         p.strokeWeight(p.max(1, baseSize * 0.01));
         p.noFill();
         p.ellipse(0, 0, rInner, rInner);
 
-        // 瞳孔中心
         p.fill(0);
         p.noStroke();
         p.ellipse(0, 0, rPupil, rPupil);
@@ -193,10 +185,12 @@ const SharinganSketch = () => {
         p.rotate(-angle); 
         p.fill(0);
         p.noStroke();
+        // 直接绘制圆形和三角形组合来模拟勾玉，避开 bezierVertex 的底层渲染 Bug
         p.ellipse(0, 0, r, r);
         p.beginShape();
-        p.vertex(r / 2, 0);
-        p.bezierVertex(r / 2, -r, -r, -r, -r, 0);
+        p.vertex(r * 0.5, 0);
+        p.vertex(-r * 0.5, 0);
+        p.vertex(0, -r * 1.2);
         p.endShape(p.CLOSE);
         p.pop();
       };
