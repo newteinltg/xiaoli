@@ -18,15 +18,11 @@ const SharinganSketch = () => {
 
       p.setup = () => {
         const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
-        canvas.mousePressed(changeEye);
-        // 处理移动端触摸
-        canvas.touchEnded(changeEye);
         p.angleMode(p.DEGREES);
         calculateSize();
       };
 
       const calculateSize = () => {
-        // 根据屏幕宽度计算基准大小，确保在手机上也能完整显示
         baseSize = p.min(p.width, p.height) * 0.8;
       };
 
@@ -43,7 +39,22 @@ const SharinganSketch = () => {
 
       const changeEye = () => {
         setEyeIndex((prev) => (prev + 1) % totalEyes);
-        return false; // 防止默认行为
+      };
+
+      // P5.js 官方推荐的交互处理方式
+      p.mousePressed = () => {
+        // 只有在画布区域点击才触发
+        if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+          changeEye();
+        }
+      };
+
+      p.touchEnded = () => {
+        // 只有在画布区域触摸才触发
+        if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+          changeEye();
+        }
+        return false; // 阻止默认刷新/滚动行为
       };
 
       p.windowResized = () => {
@@ -60,7 +71,7 @@ const SharinganSketch = () => {
 
         // 基础巩膜
         p.noStroke();
-        p.fill(220, 0, 0); // 写轮眼红
+        p.fill(220, 0, 0); 
         p.ellipse(0, 0, rMain, rMain);
         
         // 瞳孔外圈
@@ -74,7 +85,6 @@ const SharinganSketch = () => {
         p.noStroke();
         p.ellipse(0, 0, rPupil, rPupil);
 
-        // 不同类型的勾玉或万花筒图案
         p.fill(0);
         p.stroke(0);
         
@@ -94,7 +104,7 @@ const SharinganSketch = () => {
               p.pop();
             }
             break;
-          case 3: // 万花筒 - 鼬 (三刃镖形)
+          case 3: // 万花筒 - 鼬
             for (let i = 0; i < 3; i++) {
               p.push();
               p.rotate(i * 120);
@@ -106,7 +116,7 @@ const SharinganSketch = () => {
               p.pop();
             }
             break;
-          case 4: // 万花筒 - 佐助 (六芒星)
+          case 4: // 万花筒 - 佐助
             p.strokeWeight(baseSize * 0.03);
             for (let i = 0; i < 3; i++) {
               p.push();
@@ -115,7 +125,7 @@ const SharinganSketch = () => {
               p.pop();
             }
             break;
-          case 5: // 万花筒 - 卡卡西/带土 (神威)
+          case 5: // 万花筒 - 带土/卡卡西
             for (let i = 0; i < 3; i++) {
               p.push();
               p.rotate(i * 120);
@@ -127,7 +137,7 @@ const SharinganSketch = () => {
               p.pop();
             }
             break;
-          case 6: // 万花筒 - 止水 (四角大风车)
+          case 6: // 万花筒 - 止水
             for (let i = 0; i < 4; i++) {
               p.push();
               p.rotate(i * 90);
@@ -139,7 +149,7 @@ const SharinganSketch = () => {
               p.pop();
             }
             break;
-          case 7: // 万花筒 - 斑 (三个相连的圆弧)
+          case 7: // 万花筒 - 斑
             p.noFill();
             p.strokeWeight(baseSize * 0.05);
             p.ellipse(0, 0, baseSize * 0.6, baseSize * 0.6);
@@ -165,7 +175,7 @@ const SharinganSketch = () => {
             p.ellipse(0,0, baseSize * 0.3, baseSize * 0.3);
             break;
           case 9: // 轮回眼
-            p.fill(160, 140, 180); // 紫色
+            p.fill(160, 140, 180); 
             p.ellipse(0, 0, rMain, rMain);
             p.noFill();
             p.stroke(0);
